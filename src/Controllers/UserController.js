@@ -128,15 +128,9 @@ const Update_User = async (req, res) => {
   const { id } = req.params;
   try {
     const { Name, Email, Phone, isAdmin, ModifiedBy } = req.body;
-    const user = await User.find({ _id, Active: true });
+    const user = await User.find({ _id: id, Active: true });
     if (user.length) {
-      await User.findByIdAndUpdate(id, {
-        Name,
-        Email,
-        Phone,
-        isAdmin,
-        ModifiedBy,
-      });
+      await User.findByIdAndUpdate(id, req.body);
 
       res.status(200).json({ Result: "Details Updated Successfully!" });
     } else {
