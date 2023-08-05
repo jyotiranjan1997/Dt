@@ -6,10 +6,9 @@ const { PRIVATE_KEY } = process.env;
 
 const verifyadmin = async (req, res, next) => {
   try {
-    const Authorization = req.headers.authorization;
+    const Authorization = req.headers?.authorization;
     if (Authorization) {
       const token = Authorization.split(" ")[1];
-
       const decoded = jwt.verify(token, PRIVATE_KEY);
       if (decoded) {
         const Admin_User = await User.findById(decoded.User._id);
@@ -21,6 +20,10 @@ const verifyadmin = async (req, res, next) => {
         } else {
           res.status(400).json({ Result: "Error - You are unauthorized !" });
         }
+      } else {
+        return res
+          .status(400)
+          .json({ Result: "Error - You are not authenticated!" });
       }
     } else {
       return res

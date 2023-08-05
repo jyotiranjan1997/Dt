@@ -7,6 +7,7 @@ const saltRounds = 7;
 // ----------Login User checking Password and Find user into database---------------------
 
 const User_Login = async (req, res) => {
+  console.log(req.body);
   try {
     const { Email, Password } = req.body;
     const user = await User.findOne({ Email }).select("+Password");
@@ -99,7 +100,7 @@ const PasswordChange = async (req, res) => {
 // ----------Register User Password Hashing and also store------------------------------------
 const User_Signup = async (req, res) => {
   try {
-    const { Name, Email, Phone, Password, isAdmin, CreatedBy } = req.body;
+    const { Name, Email, Phone, Password } = req.body;
     const Old_User = await User.find({ Email });
 
     if (Old_User.length > 0) {
@@ -109,14 +110,7 @@ const User_Signup = async (req, res) => {
         // Store hash in your password DB.
 
         if (hash) {
-          await User.create({
-            Name,
-            Email,
-            Phone,
-            Password: hash,
-            isAdmin,
-            CreatedBy,
-          });
+          await User.create({ ...req.body, Password: hash });
           res.status(200).json({ Result: "Register Successfully!" });
         }
         if (err) {
