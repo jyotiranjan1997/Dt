@@ -125,12 +125,11 @@ const User_Signup = async (req, res) => {
 
 //-----------Update User Details and also store-------------------------------------------------
 const Update_User = async (req, res) => {
-  const { id } = req.params;
   try {
-    const { Name, Email, Phone, isAdmin, ModifiedBy } = req.body;
-    const user = await User.find({ _id: id, Active: true });
+    const { _id } = req.body;
+    const user = await User.find({ _id: _id, Active: true });
     if (user.length) {
-      await User.findByIdAndUpdate(id, req.body);
+      await User.findByIdAndUpdate(_id, req.body);
 
       res.status(200).json({ Result: "Details Updated Successfully!" });
     } else {
