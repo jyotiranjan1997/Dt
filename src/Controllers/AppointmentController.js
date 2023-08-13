@@ -78,9 +78,9 @@ const Find_Appointment_Controller = async (req, res) => {
 //-------Update Appointment Details with Message--------------------------------------------
 
 const Update_Appointment_Controller = async (req, res) => {
-  const { id } = req.params;
+  const { _id } = req.body;
   try {
-    await Appointment.findByIdAndUpdate(id, req.body);
+    await Appointment.findByIdAndUpdate(_id, req.body);
     res.status(200).json({ Result: "Appointment Updated Successfully!" });
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });

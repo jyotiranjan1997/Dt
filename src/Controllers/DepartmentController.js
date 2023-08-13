@@ -87,9 +87,9 @@ const Find_Department_Controller = async (req, res) => {
 //-------Update Department Details with Message--------------------------------------------
 
 const Update_Department_Controller = async (req, res) => {
-  const { id } = req.params;
+  const { _id } = req.body;
   try {
-    await Department.findByIdAndUpdate(id, req.body);
+    await Department.findByIdAndUpdate(_id, req.body);
     res.status(200).json({ Result: "Department Updated Successfully!" });
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });

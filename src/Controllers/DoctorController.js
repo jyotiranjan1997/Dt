@@ -78,9 +78,9 @@ const Find_Doctor_Controller = async (req, res) => {
 //-------Update Doctor Details with Message--------------------------------------------
 
 const Update_Doctor_Controller = async (req, res) => {
-  const { id } = req.params;
+  const { _id } = req.body;
   try {
-    await Doctor.findByIdAndUpdate(id, req.body);
+    await Doctor.findByIdAndUpdate(_id, req.body);
     res.status(200).json({ Result: "Doctor Updated Successfully!" });
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });

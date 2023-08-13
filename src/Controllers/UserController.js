@@ -7,7 +7,6 @@ const saltRounds = 7;
 // ----------Login User checking Password and Find user into database---------------------
 
 const User_Login = async (req, res) => {
-  console.log(req.body);
   try {
     const { Email, Password } = req.body;
     const user = await User.findOne({ Email }).select("+Password");

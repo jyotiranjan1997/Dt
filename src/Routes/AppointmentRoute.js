@@ -13,6 +13,6 @@ const AppointmentRoute = express.Router();
 AppointmentRoute.post("/", Create_Appointment_Controller); // Create Contact details Route
 AppointmentRoute.get("/", verifyadmin, Find_Appointment_Controller); // Find contacts Data with admin authorization
 AppointmentRoute.get("/:id", verifyadmin, Single_Appointment_Controller); // Find single Data with admin authorization
-AppointmentRoute.put("/:id", verifyadmin, Update_Appointment_Controller); // update Data with admin authorization
+AppointmentRoute.put("/", verifyadmin, Update_Appointment_Controller); // update Data with admin authorization
 AppointmentRoute.delete("/:id", verifyadmin, Delete_Appointment_Controller);
 module.exports = { AppointmentRoute };
