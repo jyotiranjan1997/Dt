@@ -106,9 +106,7 @@ const MemberLogin = async (req, res) => {
 
     if (MemberData.length) {
       MemberData.Password = "";
-      res
-        .status(200)
-        .json({ Result: "Successfully Login to member Page !", MemberData });
+      res.status(200).json({ Result: MemberData });
     } else {
       res.status(400).json({ Result: "Error - Incorrect details entered !" });
     }
