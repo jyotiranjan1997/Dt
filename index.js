@@ -7,6 +7,7 @@ const { UserRoute } = require("./src/Routes/UserRoute");
 const { DoctorRoute } = require("./src/Routes/DoctorRoutes");
 const { DepartmentRoute } = require("./src/Routes/DepartmentRoute");
 const { AppointmentRoute } = require("./src/Routes/AppointmentRoute");
+const { MemberRoute } = require("./src/Routes/MemberRoute");
 
 const PORT = process.env.PORT || 5000;
 
@@ -23,6 +24,7 @@ app.use("/contact", ContactRoute);
 app.use("/doctor", DoctorRoute);
 app.use("/department", DepartmentRoute);
 app.use("/appointment", AppointmentRoute);
+app.use("/member", MemberRoute);
 
 app.listen(PORT, async (req, res) => {
   await connect();
