@@ -28,7 +28,8 @@ const Find_Appointment_Controller = async (req, res) => {
         const skip_Pages = (page_no - 1) * page_size;
         const Appointments = await Appointment.find({
           Active: true,
-        }).populate(["Department", "Doctor"]);
+        })
+          .populate(["Department", "Doctor"])
           .sort({ _id: -1 })
           .skip(skip_Pages)
           .limit(page_size);
@@ -39,7 +40,8 @@ const Find_Appointment_Controller = async (req, res) => {
           const Appointments = await Appointment.find({
             Active: true,
             Name: { $regex: ".*" + Appointment_name, $options: "i" },
-          }).populate(["Department", "Doctor"]);
+          })
+            .populate(["Department", "Doctor"])
             .sort({ _id: -1 })
             .skip(skip_Pages)
             .limit(page_size);
