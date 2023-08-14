@@ -11,7 +11,7 @@ const { verifyadmin } = require("../MiddleWares/AdminVerifyMiddleWare");
 const DoctorRoute = express.Router();
 
 DoctorRoute.post("/", verifyadmin, Create_Doctor_Controller); // Create Contact details Route
-DoctorRoute.get("/", verifyadmin, Find_Doctor_Controller); // Find contacts Data with admin authorization
+DoctorRoute.get("/", Find_Doctor_Controller); // Find contacts Data with admin authorization
 DoctorRoute.get("/:id", verifyadmin, Update_Doctor_Controller); // Find single Data with admin authorization
 DoctorRoute.put("/:id", verifyadmin, Single_Doctor_Controller); // update Data with admin authorization
 DoctorRoute.delete("/:id", verifyadmin, Delete_Doctor_Controller);
