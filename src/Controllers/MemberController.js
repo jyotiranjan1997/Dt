@@ -27,57 +27,25 @@ const Create_Member_Controller = async (req, res) => {
 
 const Find_Member_Controller = async (req, res) => {
   const { page_no, Member_name, page_size } = req.query;
-
+  const skip_Pages = (page_no - 1) * page_size;
+  var Query = { Active: true };
+  if (Member_name) {
+    Query = {
+      Active: true,
+      MemberName: { $regex: ".*" + Member_name, $options: "i" },
+    };
+  }
   try {
     /* Finding Members according to query if present */
-    const total_Members = await Member.find({
-      Active: true,
-    }).count();
+    const total_Members = await Member.find(Query).count();
+    const Members = await Member.find(Query)
+      .sort({ _id: -1 })
+      .limit(page_size)
+      .skip(skip_Pages ? skip_Pages : 0);
     if (total_Members === 0) {
       res.status(400).json({ Result: "Error - No Member Exist !" });
     } else {
-      if (page_no) {
-        const skip_Pages = (page_no - 1) * page_size;
-        const Members = await Member.find({
-          Active: true,
-        })
-          .sort({ _id: -1 })
-          .skip(skip_Pages)
-          .limit(page_size);
-
-        if (Member_name) {
-          /* Finding Members according to Member name search req */
-
-          const Members = await Member.find({
-            Active: true,
-            MemberName: { $regex: ".*" + Member_name, $options: "i" },
-          })
-            .sort({ _id: -1 })
-            .skip(skip_Pages)
-            .limit(page_size);
-          const total_Members = await Member.find({
-            Active: true,
-            MemberName: { $regex: ".*" + Member_name, $options: "i" },
-          }).count();
-          res.status(200).json({ Result: Members, total_Members });
-        } else {
-          /* Finding Total Numbers of Members */
-
-          const total_Members = await Member.find({
-            Active: true,
-          }).count();
-          res.status(200).json({ Result: Members, total_Members });
-        }
-      } else {
-        /* Finding Members normal api req with default  data */
-        const Members = await Member.find({ Active: true }).sort({
-          _id: -1,
-        });
-        const Member_count = await Member.find({
-          Active: true,
-        }).count();
-        res.status(200).json({ Result: Members, total_Members: Member_count });
-      }
+      res.status(200).json({ Result: Members, total_Members });
     }
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });

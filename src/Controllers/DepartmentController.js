@@ -25,59 +25,26 @@ const Create_Department_Controller = async (req, res) => {
 
 const Find_Department_Controller = async (req, res) => {
   const { page_no, Department_name, page_size } = req.query;
+  const skip_Pages = (page_no - 1) * page_size;
+  var Query = { Active: true };
+  if (Department_name) {
+    Query = {
+      Active: true,
+      DepartmentName: { $regex: ".*" + Department_name, $options: "i" },
+    };
+  }
 
   try {
     /* Finding Departments according to query if present */
-    const total_Departments = await Department.find({
-      Active: true,
-    }).count();
+    const total_Departments = await Department.find(Query).count();
+    const Departments = await Department.find(Query)
+      .sort({ _id: -1 })
+      .limit(page_size)
+      .skip(skip_Pages ? skip_Pages : 0);
     if (total_Departments === 0) {
       res.status(400).json({ Result: "Error - No Department Exist !" });
     } else {
-      if (page_no) {
-        const skip_Pages = (page_no - 1) * page_size;
-        const Departments = await Department.find({
-          Active: true,
-        })
-          .sort({ _id: -1 })
-          .skip(skip_Pages)
-          .limit(page_size);
-
-        if (Department_name) {
-          /* Finding Departments according to Department name search req */
-
-          const Departments = await Department.find({
-            Active: true,
-            DepartmentName: { $regex: ".*" + Department_name, $options: "i" },
-          })
-            .sort({ _id: -1 })
-            .skip(skip_Pages)
-            .limit(page_size);
-          const total_Departments = await Department.find({
-            Active: true,
-            DepartmentName: { $regex: ".*" + Department_name, $options: "i" },
-          }).count();
-          res.status(200).json({ Result: Departments, total_Departments });
-        } else {
-          /* Finding Total Numbers of Departments */
-
-          const total_Departments = await Department.find({
-            Active: true,
-          }).count();
-          res.status(200).json({ Result: Departments, total_Departments });
-        }
-      } else {
-        /* Finding Departments normal api req with default  data */
-        const Departments = await Department.find({ Active: true }).sort({
-          _id: -1,
-        });
-        const Department_count = await Department.find({
-          Active: true,
-        }).count();
-        res
-          .status(200)
-          .json({ Result: Departments, total_Departments: Department_count });
-      }
+      res.status(200).json({ Result: Departments, total_Departments });
     }
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });

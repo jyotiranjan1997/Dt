@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const DoctorSchema = new mongoose.Schema(
+const OfferSchema = new mongoose.Schema(
   {
     OfferTitle: { type: String, required: true },
     Department: { type: mongoose.Schema.Types.ObjectId, ref: "Department" },
@@ -15,6 +15,6 @@ const DoctorSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Doctor = mongoose.model("Doctor", DoctorSchema);
+const Offer = mongoose.model("Offer", OfferSchema);
 
-module.exports = { Doctor };
+module.exports = { Offer };

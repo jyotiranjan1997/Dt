@@ -16,55 +16,28 @@ const Create_Contact_Controller = async (req, res) => {
 
 const Find_Contact_Controller = async (req, res) => {
   const { page_no, contact_name, page_size } = req.query;
+  const skip_Pages = (page_no - 1) * page_size;
+  var Query = { Active: true };
+  if (contact_name) {
+    Query = {
+      Active: true,
+      Name: { $regex: ".*" + contact_name, $options: "i" },
+    };
+  }
 
   try {
     /* Finding Contacts according to query if present */
-    const total_contacts = await Contact.find({
-      Active: true,
-    }).count();
+
+    const total_contacts = await Contact.find(Query).count();
+    const Contacts = await Contact.find(Query)
+      .sort({ _id: -1 })
+      .limit(page_size)
+      .skip(skip_Pages ? skip_Pages : 0);
+
     if (total_contacts === 0) {
       res.status(400).json({ Result: "Error - No Contact Exist !" });
     } else {
-      if (page_no) {
-        const skip_Pages = (page_no - 1) * page_size;
-        const Contacts = await Contact.find({
-          Active: true,
-        })
-          .sort({ _id: -1 })
-          .skip(skip_Pages)
-          .limit(page_size);
-
-        if (contact_name) {
-          /* Finding Contacts according to contact name search req */
-
-          const Contacts = await Contact.find({
-            Active: true,
-            Name: { $regex: ".*" + contact_name, $options: "i" },
-          })
-            .sort({ _id: -1 })
-            .skip(skip_Pages)
-            .limit(page_size);
-          const total_contacts = await Contact.find({
-            Active: true,
-            Name: { $regex: ".*" + contact_name, $options: "i" },
-          }).count();
-          res.status(200).json({ Result: Contacts, total_contacts });
-        } else {
-          /* Finding Total Numbers of Contacts */
-
-          const total_contacts = await Contact.find({
-            Active: true,
-          }).count();
-          res.status(200).json({ Result: Contacts, total_contacts });
-        }
-      } else {
-        /* Finding Contacts normal api req with default  data */
-        const Contacts = await Contact.find({ Active: true }).sort({ _id: -1 });
-        const Contact_count = await Contact.find({ Active: true }).count();
-        res
-          .status(200)
-          .json({ Result: Contacts, total_contacts: Contact_count });
-      }
+      res.status(200).json({ Result: Contacts, total_contacts });
     }
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });

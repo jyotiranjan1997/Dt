@@ -22,53 +22,26 @@ const Create_Doctor_Controller = async (req, res) => {
 
 const Find_Doctor_Controller = async (req, res) => {
   const { page_no, Doctor_name, page_size } = req.query;
-
+  const skip_Pages = (page_no - 1) * page_size;
+  var Query = { Active: true };
+  if (Doctor_name) {
+    Query = {
+      Active: true,
+      Name: { $regex: ".*" + Doctor_name, $options: "i" },
+    };
+  }
   try {
     /* Finding Doctors according to query if present */
-    const total_Doctors = await Doctor.find({
-      Active: true,
-    }).count();
+    const total_Doctors = await Doctor.find(Query).count();
+    const Doctors = await Doctor.find(Query)
+      .sort({ _id: -1 })
+      .limit(page_size)
+      .skip(skip_Pages ? skip_Pages : 0);
+
     if (total_Doctors === 0) {
       res.status(400).json({ Result: "Error - No Doctor Exist !" });
     } else {
-      if (page_no) {
-        const skip_Pages = (page_no - 1) * page_size;
-        const Doctors = await Doctor.find({
-          Active: true,
-        })
-          .sort({ _id: -1 })
-          .skip(skip_Pages)
-          .limit(page_size);
-
-        if (Doctor_name) {
-          /* Finding Doctors according to Doctor name search req */
-
-          const Doctors = await Doctor.find({
-            Active: true,
-            Name: { $regex: ".*" + Doctor_name, $options: "i" },
-          })
-            .sort({ _id: -1 })
-            .skip(skip_Pages)
-            .limit(page_size);
-          const total_Doctors = await Doctor.find({
-            Active: true,
-            Name: { $regex: ".*" + Doctor_name, $options: "i" },
-          }).count();
-          res.status(200).json({ Result: Doctors, total_Doctors });
-        } else {
-          /* Finding Total Numbers of Doctors */
-
-          const total_Doctors = await Doctor.find({
-            Active: true,
-          }).count();
-          res.status(200).json({ Result: Doctors, total_Doctors });
-        }
-      } else {
-        /* Finding Doctors normal api req with default  data */
-        const Doctors = await Doctor.find({ Active: true }).sort({ _id: -1 });
-        const Doctor_count = await Doctor.find({ Active: true }).count();
-        res.status(200).json({ Result: Doctors, total_Doctors: Doctor_count });
-      }
+      res.status(200).json({ Result: Doctors, total_Doctors });
     }
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });

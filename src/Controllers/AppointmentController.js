@@ -15,64 +15,31 @@ const Create_Appointment_Controller = async (req, res) => {
 
 const Find_Appointment_Controller = async (req, res) => {
   const { page_no, Appointment_name, page_size } = req.query;
-
-  try {
-    /* Finding Appointments according to query if present */
-    const total_Appointments = await Appointment.find({
+  const skip_Pages = (page_no - 1) * page_size;
+  var Query = {
+    Active: true,
+  };
+  if (Appointment_name) {
+    Query = {
       Active: true,
-    }).count();
+      Name: { $regex: ".*" + Appointment_name, $options: "i" },
+    };
+  }
+  try {
+    const Appointments = await Appointment.find(Query)
+      .populate(["Department", "Doctor"])
+      .sort({ _id: -1 })
+      .limit(page_size)
+      .skip(skip_Pages ? skip_Pages : 0);
+    const total_Appointments = await Appointment.find(Query).count();
+
     if (total_Appointments === 0) {
       res.status(400).json({ Result: "Error - No Appointment Exist !" });
     } else {
-      if (page_no) {
-        const skip_Pages = (page_no - 1) * page_size;
-        const Appointments = await Appointment.find({
-          Active: true,
-        })
-          .populate(["Department", "Doctor"])
-          .sort({ _id: -1 })
-          .skip(skip_Pages)
-          .limit(page_size);
-
-        if (Appointment_name) {
-          /* Finding Appointments according to Appointment name search req */
-
-          const Appointments = await Appointment.find({
-            Active: true,
-            Name: { $regex: ".*" + Appointment_name, $options: "i" },
-          })
-            .populate(["Department", "Doctor"])
-            .sort({ _id: -1 })
-            .skip(skip_Pages)
-            .limit(page_size);
-          const total_Appointments = await Appointment.find({
-            Active: true,
-            Name: { $regex: ".*" + Appointment_name, $options: "i" },
-          }).count();
-          res.status(200).json({ Result: Appointments, total_Appointments });
-        } else {
-          /* Finding Total Numbers of Appointments */
-
-          const total_Appointments = await Appointment.find({
-            Active: true,
-          }).count();
-          res.status(200).json({ Result: Appointments, total_Appointments });
-        }
-      } else {
-        /* Finding Appointments normal api req with default  data */
-        const Appointments = await Appointment.find({ Active: true })
-          .sort({
-            _id: -1,
-          })
-          .populate(["Department", "Doctor"]);
-        const Appointment_count = await Appointment.find({
-          Active: true,
-        }).count();
-        res.status(200).json({
-          Result: Appointments,
-          total_Appointments: Appointment_count,
-        });
-      }
+      res.status(200).json({
+        Result: Appointments,
+        total_Appointments: Appointment_count,
+      });
     }
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
