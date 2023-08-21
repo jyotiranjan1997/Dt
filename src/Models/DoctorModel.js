@@ -8,6 +8,7 @@ const DoctorSchema = new mongoose.Schema(
     StartTime: { type: String, required: true },
     EndTime: { type: String, required: true },
     isAvailable: { type: Boolean, default: true },
+    Specialist: { type: String, required: true },
     Active: { type: Boolean, default: true },
     CreatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     ModifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

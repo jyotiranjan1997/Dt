@@ -30,7 +30,7 @@ const Find_Department_Controller = async (req, res) => {
   if (Department_name) {
     Query = {
       Active: true,
-      DepartmentName: { $regex: ".*" + Department_name, $options: "i" },
+      TestName: { $regex: ".*" + Department_name, $options: "i" },
     };
   }
 
