@@ -4,6 +4,7 @@ const DoctorSchema = new mongoose.Schema(
   {
     Name: { type: String, required: true },
     Email: { type: String, required: true },
+    Photo: { type: String },
     Phone: { type: Number, required: true },
     StartTime: { type: String, required: true },
     EndTime: { type: String, required: true },
