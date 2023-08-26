@@ -16,14 +16,15 @@ const GET_TIME = (time) => {
 
 const GET_EXP_TIME = (time) => {
   var date = new Date(time);
+  let year = date.getFullYear();
+  year = +year + 5;
 
   return (
     date.getDate() +
     " " +
     date.toLocaleString("default", { month: "long" }) +
     " " +
-    +date.getFullYear() +
-    5
+    year
   );
 };
 
@@ -62,7 +63,11 @@ const Find_Member_Controller = async (req, res) => {
   if (Member_name) {
     Query = {
       Active: true,
-      MemberName: { $regex: ".*" + Member_name, $options: "i" },
+      $or: [
+        { MemberName: { $regex: ".*" + Member_name, $options: "i" } },
+        { MemberId: { $regex: ".*" + Member_name, $options: "i" } },
+        { Phone: { $regex: ".*" + Member_name, $options: "i" } },
+      ],
     };
   }
   try {

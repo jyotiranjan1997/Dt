@@ -22,7 +22,11 @@ const Find_Appointment_Controller = async (req, res) => {
   if (Appointment_name) {
     Query = {
       Active: true,
-      Name: { $regex: ".*" + Appointment_name, $options: "i" },
+      $or: [
+        { Name: { $regex: ".*" + Appointment_name, $options: "i" } },
+        { Phone: { $regex: ".*" + Appointment_name, $options: "i" } },
+        { Email: { $regex: ".*" + Appointment_name, $options: "i" } },
+      ],
     };
   }
   try {
