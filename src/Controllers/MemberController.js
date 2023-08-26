@@ -22,7 +22,7 @@ const GET_EXP_TIME = (time) => {
     " " +
     date.toLocaleString("default", { month: "long" }) +
     " " +
-    date.getFullYear() +
+    +date.getFullYear() +
     5
   );
 };
