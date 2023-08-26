@@ -31,7 +31,7 @@ const Create_Member_Controller = async (req, res) => {
   const { Phone, Email } = req.body;
   try {
     const MemberData = await Member.find({
-      $or: [{ Phone }, { Email }],
+      $or: [{ Phone }],
       Active: true,
     });
 
