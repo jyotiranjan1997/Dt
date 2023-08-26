@@ -3,10 +3,10 @@ const { Member } = require("../Models/MemberModel");
 //-------Create Member Details with Message-----------------------------------------------
 
 const Create_Member_Controller = async (req, res) => {
-  const { Phone, Email, MemberName } = req.body;
+  const { Phone, Email } = req.body;
   try {
     const MemberData = await Member.find({
-      $or: [{ Phone }, { Email }, { MemberName }],
+      $or: [{ Phone }, { Email }],
       Active: true,
     });
 
