@@ -2,6 +2,31 @@ const { Member } = require("../Models/MemberModel");
 
 //-------Create Member Details with Message-----------------------------------------------
 
+const GET_TIME = (time) => {
+  var date = new Date(time);
+
+  return (
+    date.getDate() +
+    " " +
+    date.toLocaleString("default", { month: "long" }) +
+    " " +
+    date.getFullYear()
+  );
+};
+
+const GET_EXP_TIME = (time) => {
+  var date = new Date(time);
+
+  return (
+    date.getDate() +
+    " " +
+    date.toLocaleString("default", { month: "long" }) +
+    " " +
+    date.getFullYear() +
+    5
+  );
+};
+
 const Create_Member_Controller = async (req, res) => {
   const { Phone, Email } = req.body;
   try {
@@ -13,7 +38,12 @@ const Create_Member_Controller = async (req, res) => {
     if (MemberData.length) {
       res.status(400).json({ Result: `Error - Member is already exist !` });
     } else {
-      await Member.create(req.body);
+      const d = new Date();
+
+      const MemberStartDate = GET_TIME(d);
+      const MemberExpiryDate = GET_EXP_TIME(d);
+
+      await Member.create({ ...req.body, MemberStartDate, MemberExpiryDate });
       res
         .status(200)
         .json({ Result: "Member Added Successfully now get your discount!" });
