@@ -7,7 +7,7 @@ const AppointmentSchema = new mongoose.Schema(
     Time: { type: String },
     PromoCode: { type: String },
     BookingStatus: { type: Boolean, default: true },
-    Phone: { type: Number, required: [true, "Phone Number must required!"] },
+    Phone: { type: String, required: [true, "Phone Number must required!"] },
     Doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
     isMember: { type: Boolean },
     Department: [{ type: mongoose.Schema.Types.ObjectId, ref: "Department" }],

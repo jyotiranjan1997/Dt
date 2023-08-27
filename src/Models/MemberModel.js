@@ -11,7 +11,7 @@ const MemberSchema = new mongoose.Schema(
     Password: { type: String },
     Refer: { type: mongoose.Schema.Types.ObjectId, ref: "Appointment" },
     Reports: { type: mongoose.Schema.Types.ObjectId, ref: "Report" },
-    Phone: { type: Number, required: true },
+    Phone: { type: String, required: true },
     Active: { type: Boolean, default: true },
     CreatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     ModifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
