@@ -13,6 +13,24 @@ const Create_Appointment_Controller = async (req, res) => {
 
 //-------Find all Appointments according to the query-----------------------------------------
 
+const Find_Referal_Controller = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const Referals = await Appointment.find({ Active: true, ReferId: id });
+    const total_referals = await Appointment.find({
+      Active: true,
+      ReferId: id,
+    }).count();
+    if (total_referals === 0) {
+      res.status(400).json({ Result: "No Referal are exist !" });
+    } else {
+      res.status(200).json({ Result: Referals, total_referals });
+    }
+  } catch (ex) {
+    res.status(400).json({ Result: `Error-${ex.message}` });
+  }
+};
+
 const Find_Appointment_Controller = async (req, res) => {
   const { page_no, Appointment_name, page_size } = req.query;
   const skip_Pages = (page_no - 1) * page_size;
@@ -95,4 +113,5 @@ module.exports = {
   Update_Appointment_Controller,
   Single_Appointment_Controller,
   Delete_Appointment_Controller,
+  Find_Referal_Controller,
 };
