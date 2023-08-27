@@ -42,7 +42,7 @@ const Find_Appointment_Controller = async (req, res) => {
     } else {
       res.status(200).json({
         Result: Appointments,
-        total_Appointments: Appointment_count,
+        total_Appointments,
       });
     }
   } catch (ex) {
