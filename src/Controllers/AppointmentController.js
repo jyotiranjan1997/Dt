@@ -4,7 +4,17 @@ const { Appointment } = require("../Models/AppointmentModel");
 
 const Create_Appointment_Controller = async (req, res) => {
   try {
-    await Appointment.create(req.body);
+    const TotalPrice = 0;
+
+    if (req.body?.Department.length !== 0) {
+      req.body.Department.map(async (el) => {
+        const dep = await Department.findOne({ _id: el._id });
+        TotalPrice += +dep?.TestPrice;
+      });
+    }
+
+    await Appointment.create({ ...req.body, TotalPrice });
+
     res.status(200).json({ Result: "Appointment Added Successfully!" });
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
@@ -73,7 +83,15 @@ const Find_Appointment_Controller = async (req, res) => {
 const Update_Appointment_Controller = async (req, res) => {
   const { _id } = req.body;
   try {
-    await Appointment.findByIdAndUpdate(_id, req.body);
+    const TotalPrice = 0;
+
+    if (req.body?.Department.length !== 0) {
+      req.body.Department.map(async (el) => {
+        const dep = await Department.findOne({ _id: el._id });
+        TotalPrice += +dep?.TestPrice;
+      });
+    }
+    await Appointment.findByIdAndUpdate(_id, { ...req.body, TotalPrice });
     res.status(200).json({ Result: "Appointment Updated Successfully!" });
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
