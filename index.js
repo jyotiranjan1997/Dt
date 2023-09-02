@@ -16,7 +16,7 @@ const app = express();
 /* BASIC */
 app.use(express.json());
 app.use(cors());
-
+connect();
 app.get("/", async (req, res) => {
   res.status(200).json({ Result: "Welcome to Backend" });
 });
@@ -29,6 +29,5 @@ app.use("/member", MemberRoute);
 app.use("/offer", OfferRoute);
 
 app.listen(PORT, async (req, res) => {
-  await connect();
   console.log("Listening at " + PORT);
 });
