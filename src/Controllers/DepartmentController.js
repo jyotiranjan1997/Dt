@@ -5,17 +5,8 @@ const { Department } = require("../Models/DepartmentModel");
 const Create_Department_Controller = async (req, res) => {
   const { DepartmentName } = req.body;
   try {
-    const DepartmentData = await Department.find({
-      DepartmentName,
-      Active: true,
-    });
-
-    if (DepartmentData.length) {
-      res.status(400).json({ Result: `Error - Department already exist !` });
-    } else {
-      await Department.create(req.body);
-      res.status(200).json({ Result: "Department Added Successfully!" });
-    }
+    await Department.create(req.body);
+    res.status(200).json({ Result: "Department Added Successfully!" });
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
   }
