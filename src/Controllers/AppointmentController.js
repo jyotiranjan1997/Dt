@@ -1,33 +1,47 @@
 const { Appointment } = require("../Models/AppointmentModel");
-const { Department } = require("../Models/DepartmentModel");
-//-------Create Appointment Details with Message-----------------------------------------------
+const { Member } = require("../Models/MemberModel");
+const { PromoCode } = require("../Models/PromoCodeModel");
+
+//---------------------Create Appointment Details with Message-----------------------------------------------
 
 const Create_Appointment_Controller = async (req, res) => {
   try {
-    let TotalPrice = 0;
-    if (req.body?.Department.length !== 0) {
-      req.body.Department.map(async (el) => {
-        const dep = await Department.findOne({ _id: el });
-        TotalPrice += +dep?.TestPrice;
-      });
+
+    if (req.body?.PromoCode) {
+      let Code = await PromoCode.find({ PromoCodeName: req.body.PromoCode });
+      if (req.body?.TotalPrice) {
+        req.body.TestPrice =
+        Math.floor(req.body.TotalPrice - (req.body.TotalPrice * Code.Discount) / 100);
+      }
+    }else{
+      if (req.body?.TotalPrice) {
+      req.body.TestPrice =
+      Math.floor(req.body.TotalPrice - (req.body.TotalPrice * 10) / 100);
+      }
     }
-
-    await Appointment.create({ ...req.body, TotalPrice });
-
+    if(req.body?.ReferId && req.body?.TotalPrice){
+      let MemberData=await Member.findOne({Active:true,_id:req.body.ReferId});
+      if(MemberData){
+        req.body.MemberPrice= Math.floor(req.body.TotalPrice*MemberData.Discount)/100
+      }
+    }
+    await Appointment.create({ ...req.body });
     res.status(200).json({ Result: "Appointment Added Successfully!" });
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
   }
 };
 
-//-------Find all Appointments according to the query-----------------------------------------
+//---------------------Find all Appointments according to the query-----------------------------------------
 
 const Find_Referal_Controller = async (req, res) => {
   try {
     const { id } = req.params;
-    const Referals = await Appointment.find({ Active: true, ReferId: id });
+    const Referals = await Appointment.find({ Active: true,isPaid:false, ReferId: id }).populate(["Department", "Doctor","ReferId"])
+    .sort({ _id: -1 });
     const total_referals = await Appointment.find({
       Active: true,
+      isPaid:false,
       ReferId: id,
     }).count();
     if (total_referals === 0) {
@@ -39,6 +53,8 @@ const Find_Referal_Controller = async (req, res) => {
     res.status(400).json({ Result: `Error-${ex.message}` });
   }
 };
+
+
 
 const Find_Appointment_Controller = async (req, res) => {
   const { page_no, Appointment_name, page_size } = req.query;
@@ -57,13 +73,13 @@ const Find_Appointment_Controller = async (req, res) => {
     };
   }
   try {
+ 
     const Appointments = await Appointment.find(Query)
-      .populate(["Department", "Doctor"])
+      .populate(["Department", "Doctor","ReferId"])
       .sort({ _id: -1 })
       .limit(page_size)
       .skip(skip_Pages ? skip_Pages : 0);
     const total_Appointments = await Appointment.find(Query).count();
-
     if (total_Appointments === 0) {
       res.status(400).json({ Result: "Error - No Appointment Exist !" });
     } else {
@@ -77,27 +93,40 @@ const Find_Appointment_Controller = async (req, res) => {
   }
 };
 
-//-------Update Appointment Details with Message--------------------------------------------
+//-------------------------Update Appointment Details with Message--------------------------------------------
 
 const Update_Appointment_Controller = async (req, res) => {
   const { _id } = req.body;
   try {
-    const TotalPrice = 0;
-
-    if (req.body?.Department.length !== 0) {
-      req.body.Department.map(async (el) => {
-        const dep = await Department.findOne({ _id: el._id });
-        TotalPrice += +dep?.TestPrice;
-      });
+    if (req.body?.PromoCode) {
+      let Code = await PromoCode.find({ PromoCodeName: req.body.PromoCode });
+      if (req.body?.TotalPrice) {
+        req.body.TestPrice =
+        Math.floor(req.body.TotalPrice - (req.body.TotalPrice * Code.Discount) / 100);
+      }
+    }else{
+      if (req.body?.TotalPrice) {
+        req.body.TestPrice =
+        Math.floor( req.body.TotalPrice - (req.body.TotalPrice * 10) / 100);
+        }
     }
-    await Appointment.findByIdAndUpdate(_id, { ...req.body, TotalPrice });
+    if(req.body?.ReferId && req.body?.TotalPrice){
+      let MemberData=await Member.findOne({Active:true,_id:req.body.ReferId});
+     
+      if(MemberData){
+        req.body.MemberPrice= Math.floor((req.body.TotalPrice*MemberData.Discount)/100)
+      }else{
+        res.status(400).json({Result:"Error - Member not exist !"})
+      }
+    }
+    await Appointment.findByIdAndUpdate(_id, { ...req.body });
     res.status(200).json({ Result: "Appointment Updated Successfully!" });
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
   }
 };
 
-//-------Find Single Appointment data-------------------------------------------
+//--------------------------Find Single Appointment data-------------------------------------------
 
 const Single_Appointment_Controller = async (req, res) => {
   const { id } = req.params;
@@ -108,6 +137,7 @@ const Single_Appointment_Controller = async (req, res) => {
     res.status(400).json({ Result: `Error-${ex.message}` });
   }
 };
+
 
 const Delete_Appointment_Controller = async (req, res) => {
   const { id } = req.params;

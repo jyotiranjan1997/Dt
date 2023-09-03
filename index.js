@@ -9,6 +9,7 @@ const { DepartmentRoute } = require("./src/Routes/DepartmentRoute");
 const { AppointmentRoute } = require("./src/Routes/AppointmentRoute");
 const { MemberRoute } = require("./src/Routes/MemberRoute");
 const { OfferRoute } = require("./src/Routes/OfferRoute");
+const { MemberPayOutRoute } = require("./src/Routes/MemberPayOutRoute");
 
 const PORT = process.env.PORT || 5000;
 
@@ -27,7 +28,7 @@ app.use("/department", DepartmentRoute);
 app.use("/appointment", AppointmentRoute);
 app.use("/member", MemberRoute);
 app.use("/offer", OfferRoute);
-
+app.use("/payout",MemberPayOutRoute)
 app.listen(PORT, async (req, res) => {
   console.log("Listening at " + PORT);
 });
