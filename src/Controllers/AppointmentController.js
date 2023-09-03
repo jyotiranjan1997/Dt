@@ -7,7 +7,7 @@ const Create_Appointment_Controller = async (req, res) => {
     let TotalPrice = 0;
     if (req.body?.Department.length !== 0) {
       req.body.Department.map(async (el) => {
-        const dep = await Department.findOne({ _id: el._id });
+        const dep = await Department.findOne({ _id: el });
         TotalPrice += +dep?.TestPrice;
       });
     }
