@@ -1,11 +1,10 @@
 const { Appointment } = require("../Models/AppointmentModel");
-
+const { Department } = require("../Models/DepartmentModel");
 //-------Create Appointment Details with Message-----------------------------------------------
 
 const Create_Appointment_Controller = async (req, res) => {
   try {
-    const TotalPrice = 0;
-
+    let TotalPrice = 0;
     if (req.body?.Department.length !== 0) {
       req.body.Department.map(async (el) => {
         const dep = await Department.findOne({ _id: el._id });

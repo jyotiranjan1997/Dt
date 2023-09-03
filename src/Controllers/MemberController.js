@@ -1,5 +1,5 @@
 const { Member } = require("../Models/MemberModel");
-
+const { bcrypt } = require("bcrypt");
 //-------Create Member Details with Message-----------------------------------------------
 
 const GET_TIME = (time) => {
@@ -44,10 +44,24 @@ const Create_Member_Controller = async (req, res) => {
       const MemberStartDate = GET_TIME(d);
       const MemberExpiryDate = GET_EXP_TIME(d);
 
-      await Member.create({ ...req.body, MemberStartDate, MemberExpiryDate });
-      res
-        .status(200)
-        .json({ Result: "Member Added Successfully now get your discount!" });
+      bcrypt.hash(req.body?.Password, saltRounds, async function (err, hash) {
+        // Store hash in your password DB.
+
+        if (hash) {
+          await Member.create({
+            ...req.body,
+            Password: hash,
+            MemberStartDate,
+            MemberExpiryDate,
+          });
+          res.status(200).json({
+            Result: "Member Added Successfully now get your discount!",
+          });
+        }
+        if (err) {
+          res.status(400).json({ Result: err.message });
+        }
+      });
     }
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
@@ -105,13 +119,36 @@ const MemberLogin = async (req, res) => {
   try {
     const { Phone, Password } = req.body;
 
-    const MemberData = await Member.find({ Phone, Password, Active: true });
+    const MemberData = await Member.find({ Phone, Active: true });
 
     if (MemberData.length) {
-      MemberData.Password = "";
-      res.status(200).json({ Result: MemberData });
+      bcrypt.compare(
+        Password,
+        MemberData[0].Password,
+        async function (err, result) {
+          // result == true
+          if (err) {
+            res.status(400).json({ Result: `Error - ${err.message}` });
+          }
+
+          if (result) {
+            var Details = MemberData[0].toObject();
+            delete Details.Password;
+            let token = jwt.sign({ member: Details }, PRIVATE_KEY, {
+              expiresIn: "24h",
+            });
+            res.status(200).json({ accessToken: token, Result: Details });
+          } else {
+            res.status(400).json({ Result: "Error - Incorrect password !" });
+          }
+
+          if (err) {
+            res.status(400).json({ Result: err });
+          }
+        }
+      );
     } else {
-      res.status(400).json({ Result: "Error - Incorrect details entered !" });
+      res.status(400).json({ Result: "Error - user is not Exist !" });
     }
   } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
