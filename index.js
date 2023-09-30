@@ -21,14 +21,14 @@ app.use(cors());
 app.get("/", async (req, res) => {
   res.status(200).json({ Result: "Welcome to Backend" });
 });
-app.use("/user", UserRoute);
-app.use("/contact", ContactRoute);
-app.use("/doctor", DoctorRoute);
-app.use("/department", DepartmentRoute);
-app.use("/appointment", AppointmentRoute);
-app.use("/member", MemberRoute);
-app.use("/offer", OfferRoute);
-app.use("/payout", MemberPayOutRoute);
+app.use("/api/user", UserRoute);
+app.use("/api/contact", ContactRoute);
+app.use("/api/doctor", DoctorRoute);
+app.use("/api/department", DepartmentRoute);
+app.use("/api/appointment", AppointmentRoute);
+app.use("/api/member", MemberRoute);
+app.use("/api/offer", OfferRoute);
+app.use("/api/payout", MemberPayOutRoute);
 app.listen(PORT, async (req, res) => {
   await connect();
   console.log("Listening at " + PORT);
