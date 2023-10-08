@@ -73,13 +73,13 @@ const Create_Member_Controller = async (req, res) => {
 //-------Find all Members according to the query-----------------------------------------
 const MemberPasswordChange = async (req, res) => {
   const { _id, Password } = req.body;
-  console.log(req.body);
+  console.log(req.body, "body");
   try {
     bcrypt.hash(Password, saltRounds, async function (err, hash) {
       // Store hash in your password DB.
       if (hash) {
         console.log(hash);
-        await Member.findByIdAndUpdate(_id, { Password: hash });
+        // await Member.findByIdAndUpdate(_id, { Password: hash });
         res
           .status(200)
           .json({ Result: "Member Password Updated Successfully!" });
@@ -131,6 +131,7 @@ const Find_Member_Controller = async (req, res) => {
 
 const Update_Member_Controller = async (req, res) => {
   const { _id } = req.body;
+  console.log(req.body);
   try {
     await Member.findByIdAndUpdate(_id, req.body);
     res.status(200).json({ Result: "Member Updated Successfully!" });
