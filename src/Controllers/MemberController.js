@@ -32,7 +32,7 @@ const GET_EXP_TIME = (time) => {
 };
 
 const Create_Member_Controller = async (req, res) => {
-  const { Phone, Email ,Password} = req.body;
+  const { Phone, Email, Password } = req.body;
   try {
     const MemberData = await Member.find({
       $or: [{ Phone }],
@@ -49,7 +49,6 @@ const Create_Member_Controller = async (req, res) => {
 
       bcrypt.hash(Password, saltRounds, async function (err, hash) {
         // Store hash in your password DB.
- 
         if (hash) {
           await Member.create({
             ...req.body,
@@ -72,6 +71,26 @@ const Create_Member_Controller = async (req, res) => {
 };
 
 //-------Find all Members according to the query-----------------------------------------
+const MemberPasswordChange = async (req, res) => {
+  const { _id, Password } = req.body;
+
+  try {
+    bcrypt.hash(Password, saltRounds, async function (err, hash) {
+      // Store hash in your password DB.
+      if (hash) {
+        await Member.findByIdAndUpdate(_id, { Password: hash });
+        res
+          .status(200)
+          .json({ Result: "Member Password Updated Successfully!" });
+      }
+      if (err) {
+        res.status(400).json({ Result: err.message });
+      }
+    });
+  } catch (ex) {
+    res.status(400).json({ Result: `Error-${ex.message}` });
+  }
+};
 
 const Find_Member_Controller = async (req, res) => {
   const { page_no, Member_name, page_size } = req.query;
@@ -81,22 +100,21 @@ const Find_Member_Controller = async (req, res) => {
     Query = {
       Active: true,
       $or: [
-        {MemberId:Member_name},
+        { MemberId: Member_name },
         { MemberName: { $regex: ".*" + Member_name, $options: "i" } },
         { Phone: { $regex: ".*" + Member_name, $options: "i" } },
       ],
     };
   }
-console.log(Query,Member_name)
-  
+  console.log(Query, Member_name);
+
   try {
     /* Finding Members according to query if present */
     const total_Members = await Member.find(Query).count();
-    const Members = await Member.find(Query)
-      .sort({ _id: -1 })
-      // .limit(page_size)
-      // .skip(skip_Pages ? skip_Pages : 0);
-      console.log(Members,total_Members)
+    const Members = await Member.find(Query).sort({ _id: -1 });
+    // .limit(page_size)
+    // .skip(skip_Pages ? skip_Pages : 0);
+    console.log(Members, total_Members);
     if (total_Members === 0) {
       res.status(400).json({ Result: "Error - No Member Exist !" });
     } else {
@@ -143,7 +161,7 @@ const MemberLogin = async (req, res) => {
             let token = jwt.sign({ member: Details }, PRIVATE_KEY, {
               expiresIn: "24h",
             });
-            
+
             res.status(200).json({ accessToken: token, Result: Details });
           } else {
             res.status(400).json({ Result: "Error - Incorrect password !" });
@@ -195,4 +213,5 @@ module.exports = {
   Single_Member_Controller,
   Delete_Member_Controller,
   MemberLogin,
+  MemberPasswordChange,
 };
