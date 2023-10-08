@@ -73,11 +73,12 @@ const Create_Member_Controller = async (req, res) => {
 //-------Find all Members according to the query-----------------------------------------
 const MemberPasswordChange = async (req, res) => {
   const { _id, Password } = req.body;
-
+  console.log(req.body);
   try {
     bcrypt.hash(Password, saltRounds, async function (err, hash) {
       // Store hash in your password DB.
       if (hash) {
+        console.log(hash);
         await Member.findByIdAndUpdate(_id, { Password: hash });
         res
           .status(200)
