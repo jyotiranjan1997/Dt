@@ -7,7 +7,10 @@ const { PromoCode } = require("../Models/PromoCodeModel");
 const Create_Appointment_Controller = async (req, res) => {
   try {
     if (req.body?.PromoCode) {
-      let Code = await PromoCode.find({ PromoCodeName: req.body.PromoCode });
+      let Code = await PromoCode.findOne({
+        PromoCodeName: req.body.PromoCode,
+        Active: true,
+      });
       if (req.body?.TotalPrice) {
         req.body.TestPrice = Math.floor(
           req.body.TotalPrice - (req.body.TotalPrice * Code.Discount) / 100
