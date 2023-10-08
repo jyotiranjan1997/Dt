@@ -79,7 +79,7 @@ const MemberPasswordChange = async (req, res) => {
       // Store hash in your password DB.
       if (hash) {
         console.log(hash);
-        // await Member.findByIdAndUpdate(_id, { Password: hash });
+        await Member.findByIdAndUpdate(_id, { Password: hash });
         res
           .status(200)
           .json({ Result: "Member Password Updated Successfully!" });
