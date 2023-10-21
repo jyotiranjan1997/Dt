@@ -20,7 +20,7 @@ const GET_TIME = (time) => {
 const GET_EXP_TIME = (time) => {
   var date = new Date(time);
   let year = date.getFullYear();
-  year = +year + 5;
+  year = +year + 3;
 
   return (
     date.getDate() +
