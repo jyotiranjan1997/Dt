@@ -8,7 +8,6 @@ const GET_TIME = (time) => {
 };
 
 const MemberPayout_Create = async (req, res) => {
-  console.log(req.body);
   const { MemberId } = req.body;
   const d = new Date();
   let PayOutDate = GET_TIME(d);
@@ -17,7 +16,7 @@ const MemberPayout_Create = async (req, res) => {
       Active: true,
       MemberId,
     });
-    console.log(MemberPayOutData);
+
     if (MemberPayOutData && MemberPayOutData?.PayOutStatus === false) {
       res
         .status(400)
@@ -61,7 +60,9 @@ const PayOut_List = async (req, res) => {
   try {
     const MemberData = await MemberPayOut.find({
       Active: true,
-    }).sort({ _id: -1 });
+    })
+      .sort({ _id: -1 })
+      .populate("MemberId");
     // const MemberPayoutData = await MemberPayOut.findOne({
     //   Active: true,
     //   MemberId: memberId,
@@ -75,10 +76,10 @@ const PayOut_List = async (req, res) => {
 
 const Member_Payout_Success = async (req, res) => {
   const { _id, MemberId, PayOutStatus } = req.body;
+  console.log(req.body);
   try {
     if (!PayOutStatus) {
       await MemberPayOut.findByIdAndUpdate(_id, {
-        ...req.body,
         PayOutStatus: true,
       });
       await Appointment.updateMany(
@@ -92,6 +93,24 @@ const Member_Payout_Success = async (req, res) => {
         .json({ Result: "Error - Payment already successfully !" });
     }
   } catch (ex) {
+    console.log(ex);
+    res.status(400).json({ Result: `Error-${ex.message}` });
+  }
+};
+
+const REMOVE_PAYOUT = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const PayOutData = await MemberPayOut.findByIdAndUpdate(id);
+    if (PayOutData) {
+      await MemberPayOut.findByIdAndUpdate(id, { Active: false });
+      res.status(200).json({ Result: "Payout Delete successfully !" });
+    } else {
+      res
+        .status(400)
+        .json({ Result: "Error - Payout not in list or some error!" });
+    }
+  } catch (ex) {
     res.status(400).json({ Result: `Error-${ex.message}` });
   }
 };
@@ -101,4 +120,5 @@ module.exports = {
   Member_Payout_Success,
   MemberPayOut_Data,
   PayOut_List,
+  REMOVE_PAYOUT,
 };
