@@ -57,6 +57,22 @@ const MemberPayOut_Data = async (req, res) => {
   }
 };
 
+const PayOut_List = async (req, res) => {
+  try {
+    const MemberData = await MemberPayOut.find({
+      Active: true,
+    }).sort({ _id: -1 });
+    // const MemberPayoutData = await MemberPayOut.findOne({
+    //   Active: true,
+    //   MemberId: memberId,
+    //   PayOutStatus: true,
+    // }).sort({ _id: -1 });
+    res.status(200).json({ Result: MemberData });
+  } catch (ex) {
+    res.status(400).json({ Result: `Error-${ex.message}` });
+  }
+};
+
 const Member_Payout_Success = async (req, res) => {
   const { _id, MemberId, PayOutStatus } = req.body;
   try {
@@ -84,4 +100,5 @@ module.exports = {
   MemberPayout_Create,
   Member_Payout_Success,
   MemberPayOut_Data,
+  PayOut_List,
 };
