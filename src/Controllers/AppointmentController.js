@@ -1,4 +1,4 @@
-const { upload } = require("../MiddleWares/UploadMiddleWare");
+// const { upload } = require("../MiddleWares/UploadMiddleWare");
 const { Appointment } = require("../Models/AppointmentModel");
 const { Member } = require("../Models/MemberModel");
 const { PromoCode } = require("../Models/PromoCodeModel");
