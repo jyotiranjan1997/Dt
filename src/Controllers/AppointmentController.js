@@ -1,3 +1,4 @@
+const { upload } = require("../MiddleWares/UploadMiddleWare");
 const { Appointment } = require("../Models/AppointmentModel");
 const { Member } = require("../Models/MemberModel");
 const { PromoCode } = require("../Models/PromoCodeModel");
@@ -108,6 +109,8 @@ const Find_Appointment_Controller = async (req, res) => {
 const Update_Appointment_Controller = async (req, res) => {
   const { _id } = req.body;
   try {
+    // const uploadSingle = upload("photon-report").single("Report");
+
     if (req.body?.PromoCode) {
       let Code = await PromoCode.find({ PromoCodeName: req.body.PromoCode });
       if (req.body?.TotalPrice) {
@@ -122,6 +125,7 @@ const Update_Appointment_Controller = async (req, res) => {
         );
       }
     }
+
     if (req.body?.ReferId && req.body?.TotalPrice) {
       let MemberData = await Member.findOne({
         Active: true,
@@ -136,6 +140,26 @@ const Update_Appointment_Controller = async (req, res) => {
         res.status(400).json({ Result: "Error - Member not exist !" });
       }
     }
+
+    // uploadSingle(req, res, async (err) => {
+    //   console.log(req.file);
+    //   if (err)
+    //     res
+    //       .status(400)
+    //       .json({ Result: err.message, success: false, message: err.message });
+
+    //   await Appointment.findByIdAndUpdate(_id, {
+    //     Report: req?.file?.location
+    //       ? req.file.location
+    //       : Report
+    //       ? Report
+    //       : null,
+    //     ...req.body,
+    //   });
+
+    //   res.status(200).json({ Result: "Appointment Updated Successfully!" });
+    // });
+
     await Appointment.findByIdAndUpdate(_id, { ...req.body });
     res.status(200).json({ Result: "Appointment Updated Successfully!" });
   } catch (ex) {
