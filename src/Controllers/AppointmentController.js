@@ -34,7 +34,6 @@ const Create_Appointment_Controller = async (req, res) => {
           Math.floor(req.body.TotalPrice * MemberData.Discount) / 100;
       }
     }
-    console.log(Report);
     await Appointment.create({ ...req.body });
     res.status(200).json({ Result: "Appointment Added Successfully!" });
   } catch (ex) {
