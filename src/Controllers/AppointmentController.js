@@ -2,7 +2,7 @@
 const { Appointment } = require("../Models/AppointmentModel");
 const { Member } = require("../Models/MemberModel");
 const { PromoCode } = require("../Models/PromoCodeModel");
-
+const imgbbUploader = require("imgbb-uploader");
 //---------------------Create Appointment Details with Message-----------------------------------------------
 
 const Create_Appointment_Controller = async (req, res) => {
@@ -107,7 +107,7 @@ const Find_Appointment_Controller = async (req, res) => {
 //-------------------------Update Appointment Details with Message--------------------------------------------
 
 const Update_Appointment_Controller = async (req, res) => {
-  const { _id } = req.body;
+  const { _id, Report } = req.body;
   try {
     // const uploadSingle = upload("photon-report").single("Report");
 
@@ -141,25 +141,7 @@ const Update_Appointment_Controller = async (req, res) => {
       }
     }
 
-    // uploadSingle(req, res, async (err) => {
-    //   console.log(req.file);
-    //   if (err)
-    //     res
-    //       .status(400)
-    //       .json({ Result: err.message, success: false, message: err.message });
-
-    //   await Appointment.findByIdAndUpdate(_id, {
-    //     Report: req?.file?.location
-    //       ? req.file.location
-    //       : Report
-    //       ? Report
-    //       : null,
-    //     ...req.body,
-    //   });
-
-    //   res.status(200).json({ Result: "Appointment Updated Successfully!" });
-    // });
-
+    console.log(Report);
     await Appointment.findByIdAndUpdate(_id, { ...req.body });
     res.status(200).json({ Result: "Appointment Updated Successfully!" });
   } catch (ex) {
