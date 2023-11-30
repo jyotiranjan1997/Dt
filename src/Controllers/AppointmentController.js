@@ -2,7 +2,7 @@
 const { Appointment } = require("../Models/AppointmentModel");
 const { Member } = require("../Models/MemberModel");
 const { PromoCode } = require("../Models/PromoCodeModel");
-const imgbbUploader = require("imgbb-uploader");
+
 //---------------------Create Appointment Details with Message-----------------------------------------------
 
 const Create_Appointment_Controller = async (req, res) => {
