@@ -140,8 +140,6 @@ const Update_Appointment_Controller = async (req, res) => {
         res.status(400).json({ Result: "Error - Member not exist !" });
       }
     }
-
-    console.log(Report);
     await Appointment.findByIdAndUpdate(_id, { ...req.body });
     res.status(200).json({ Result: "Appointment Updated Successfully!" });
   } catch (ex) {
