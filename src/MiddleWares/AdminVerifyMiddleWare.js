@@ -11,11 +11,10 @@ const verifyadmin = async (req, res, next) => {
       const token = Authorization.split(" ")[1];
       const decoded = jwt.verify(token, PRIVATE_KEY);
       if (decoded) {
-        const Admin_User = await User.findById(decoded.User._id);
-        if (Admin_User && Admin_User?.isAdmin === true) {
-          req.body.isSuperAdmin = Admin_User.isSuperAdmin;
-          req.body.user_id = Admin_User._id;
-          req.user = Admin_User;
+        if (decoded.User && decoded.User?.isAdmin === true) {
+          req.body.isSuperAdmin = decoded.User.isSuperAdmin;
+          req.body.user_id = decoded.User._id;
+          req.user = decoded.User;
           next();
         } else {
           res.status(400).json({ Result: "Error - You are unauthorized !" });

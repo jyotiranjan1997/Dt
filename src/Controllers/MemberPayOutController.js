@@ -76,7 +76,7 @@ const PayOut_List = async (req, res) => {
 
 const Member_Payout_Success = async (req, res) => {
   const { _id, MemberId, PayOutStatus } = req.body;
-  console.log(req.body);
+
   try {
     if (!PayOutStatus) {
       await MemberPayOut.findByIdAndUpdate(_id, {
@@ -93,7 +93,6 @@ const Member_Payout_Success = async (req, res) => {
         .json({ Result: "Error - Payment already successfully !" });
     }
   } catch (ex) {
-    console.log(ex);
     res.status(400).json({ Result: `Error-${ex.message}` });
   }
 };

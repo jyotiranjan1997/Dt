@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { ContactRoute } = require("./src/Routes/ContactRoutes");
-const { connect } = require("./src/Config/db");
+const { connect, Disconnect } = require("./src/Config/db");
 const { UserRoute } = require("./src/Routes/UserRoute");
 const { DoctorRoute } = require("./src/Routes/DoctorRoutes");
 const { DepartmentRoute } = require("./src/Routes/DepartmentRoute");
@@ -31,7 +31,19 @@ app.use("/api/member", MemberRoute);
 app.use("/api/offer", OfferRoute);
 app.use("/api/payout", MemberPayOutRoute);
 app.use("/api/promocode", PromoCode);
+
 app.listen(PORT, async (req, res) => {
   await connect();
   console.log("Listening at " + PORT);
+});
+
+process.on("SIGTERM", () => {
+  console.info("SIGTERM signal received.");
+  console.log("Closing http server.");
+  server.close(() => {
+    console.log("Http server closed.");
+    // boolean means [force], see in mongoose doc
+    Disconnect();
+    process.exit(0);
+  });
 });
