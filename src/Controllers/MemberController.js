@@ -110,9 +110,10 @@ const Find_Member_Controller = async (req, res) => {
   try {
     /* Finding Members according to query if present */
     const total_Members = await Member.find(Query).count();
-    const Members = await Member.find(Query).sort({ _id: -1 });
-    // .limit(page_size)
-    // .skip(skip_Pages ? skip_Pages : 0);
+    const Members = await Member.find(Query)
+      .sort({ _id: -1 })
+      .limit(page_size)
+      .skip(skip_Pages ? skip_Pages : 0);
 
     if (total_Members === 0) {
       res.status(400).json({ Result: "Error - No Member Exist !" });
